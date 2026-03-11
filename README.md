@@ -2,6 +2,19 @@
 
 Visual mission-control dashboard for `claude-team` / `maniple` workers in an OpenClaw-based workflow.
 
+## Quickstart
+
+```bash
+git clone git@github.com:Some1Elsewhere/aeon-worker-cockpit.git
+cd aeon-worker-cockpit
+cp .env.example .env   # optional
+./run.sh
+```
+
+Then open:
+
+- <http://localhost:7700>
+
 This app exists to solve one annoying problem: spawned workers are often **doing real work invisibly**. Worker Cockpit gives you a local visual layer that shows what is running, what is idle, what is awaiting review, what looks stale, and what just happened.
 
 ## Screenshot
@@ -239,6 +252,10 @@ with your own MCP profile name.
 
 # Configuration
 
+## Configuration
+
+You can either export environment variables directly or create a local `.env` file from `.env.example` and start the app with `./run.sh`.
+
 ## Environment variables
 
 | Env var | Default | Description |
@@ -373,6 +390,18 @@ Run on another port:
 ```bash
 PORT=7710 node server.js
 ```
+
+---
+
+# Run helper
+
+A small launcher script is included:
+
+```bash
+./run.sh
+```
+
+It will load `.env` automatically if present, then start the Node server.
 
 ---
 
