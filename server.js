@@ -159,6 +159,6 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`\n  ⬡ Aeon Worker Cockpit`);
+  console.log(`\n  ⬡ AI Agent Status Cockpit`);
   console.log(`  ➜ http://localhost:${PORT}\n`);
 });

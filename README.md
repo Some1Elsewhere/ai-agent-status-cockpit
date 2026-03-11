@@ -1,4 +1,4 @@
-# Aeon Worker Cockpit
+# AI Agent Status Cockpit
 
 Visual mission-control dashboard for `claude-team` / `maniple` workers in an OpenClaw-based workflow.
 
@@ -15,13 +15,13 @@ Then open:
 
 - <http://localhost:7700>
 
-This app exists to solve one annoying problem: spawned workers are often **doing real work invisibly**. Worker Cockpit gives you a local visual layer that shows what is running, what is idle, what is awaiting review, what looks stale, and what just happened.
+This app exists to solve one annoying problem: spawned workers are often **doing real work invisibly**. AI Agent Status Cockpit gives you a local visual layer that shows what is running, what is idle, what is awaiting review, what looks stale, and what just happened.
 
 The repo is intentionally portable: avoid machine-specific absolute paths, keep configuration in env vars, and treat the worker MCP profile as configurable.
 
 ## Screenshot
 
-![Aeon Worker Cockpit live view](docs/worker-cockpit-live.png)
+![AI Agent Status Cockpit live view](docs/worker-cockpit-live.png)
 
 ## What it does
 
@@ -198,7 +198,7 @@ You should see worker tools like:
 
 If that works, the cockpit has what it needs.
 
-## F. Start Worker Cockpit
+## F. Start AI Agent Status Cockpit
 
 ```bash
 node server.js
@@ -212,9 +212,9 @@ Open:
 
 # Connecting it to an existing OpenClaw install
 
-## What Worker Cockpit expects
+## What AI Agent Status Cockpit expects
 
-Worker Cockpit is intentionally dumb/simple. It expects:
+AI Agent Status Cockpit is intentionally dumb/simple. It expects:
 
 1. OpenClaw environment already exists
 2. `mcporter` can reach a worker MCP server
@@ -325,7 +325,7 @@ If you want a setup close to the one this app was tested against, the stack look
 2. **Claude Code** as the worker engine
 3. **claude-team / maniple** for visible worker spawning
 4. **mcporter** for MCP connectivity
-5. **Aeon Worker Cockpit** for visual progress and control
+5. **AI Agent Status Cockpit** for visual progress and control
 6. **Obsidian** for worker/session logging
 
 That gives you:
