@@ -151,13 +151,13 @@ async function apiPost(path, body) {
 
 // ── Actions ──
 
-window.actionCopy = function (text, btn) {
-  event.stopPropagation();
+window.actionCopy = function (ev, text, btn) {
+  if (ev) ev.stopPropagation();
   copyText(text, btn);
 };
 
-window.actionInspect = function (sid) {
-  event.stopPropagation();
+window.actionInspect = function (ev, sid) {
+  if (ev) ev.stopPropagation();
   selectedSid = sid;
   // Always fetch fresh examine data
   fetch(`/api/examine?id=${encodeURIComponent(sid)}`)
@@ -170,8 +170,8 @@ window.actionInspect = function (sid) {
     .catch((err) => console.error("Inspect error:", err));
 };
 
-window.actionClose = async function (sid) {
-  event.stopPropagation();
+window.actionClose = async function (ev, sid) {
+  if (ev) ev.stopPropagation();
   if (!confirm("Close this worker?")) return;
   try {
     await apiPost("/api/action/close", { session_id: sid });
@@ -182,8 +182,8 @@ window.actionClose = async function (sid) {
 };
 
 let msgTargetSid = null;
-window.actionMessage = function (sid) {
-  event.stopPropagation();
+window.actionMessage = function (ev, sid) {
+  if (ev) ev.stopPropagation();
   msgTargetSid = sid;
   document.getElementById("msg-modal").classList.remove("hidden");
   document.getElementById("msg-input").focus();
@@ -217,7 +217,7 @@ function renderWorkerCard(w) {
   return `
     <div class="worker-card ${selected ? "selected" : ""}" data-sid="${esc(w.session_id)}">
       <div class="card-header">
-        <span class="worker-name" onclick="actionInspect('${esc(w.session_id)}')">
+        <span class="worker-name" onclick="actionInspect(event, '${esc(w.session_id)}')">
           <span class="pulse ${state}"></span>
           ${esc(w.name)}
         </span>
@@ -231,10 +231,10 @@ function renderWorkerCard(w) {
         <dt>agent</dt><dd>${esc(w.agent_type || "claude")}</dd>
       </dl>
       <div class="card-actions">
-        <button class="btn-ghost" onclick="actionInspect('${esc(w.session_id)}')">inspect</button>
-        ${w.worktree_path ? `<button class="btn-ghost" onclick="actionCopy('${esc(w.worktree_path)}', this)">copy path</button>` : ""}
-        <button class="btn-ghost" onclick="actionMessage('${esc(w.session_id)}')">message</button>
-        ${state === "done" ? `<button class="btn-ghost" style="color:var(--cyan)" onclick="actionClose('${esc(w.session_id)}')">dismiss</button>` : state !== "closed" ? `<button class="btn-ghost" style="color:var(--red)" onclick="actionClose('${esc(w.session_id)}')">close</button>` : ""}
+        <button class="btn-ghost" onclick="actionInspect(event, '${esc(w.session_id)}')">inspect</button>
+        ${w.worktree_path ? `<button class="btn-ghost" onclick="actionCopy(event, '${esc(w.worktree_path)}', this)">copy path</button>` : ""}
+        <button class="btn-ghost" onclick="actionMessage(event, '${esc(w.session_id)}')">message</button>
+        ${state === "done" ? `<button class="btn-ghost" style="color:var(--cyan)" onclick="actionClose(event, '${esc(w.session_id)}')">dismiss</button>` : state !== "closed" ? `<button class="btn-ghost" style="color:var(--red)" onclick="actionClose(event, '${esc(w.session_id)}')">close</button>` : ""}
       </div>
     </div>
   `;
@@ -289,12 +289,12 @@ function renderDetail() {
         <dt>worktree</dt>
         <dd class="path-row">
           <span>${esc(shortPath(w.worktree_path))}</span>
-          ${w.worktree_path ? `<button class="btn-ghost" onclick="actionCopy('${esc(w.worktree_path)}', this)">copy</button>` : ""}
+          ${w.worktree_path ? `<button class="btn-ghost" onclick="actionCopy(event, '${esc(w.worktree_path)}', this)">copy</button>` : ""}
         </dd>
         <dt>project</dt>
         <dd class="path-row">
           <span>${esc(shortPath(w.project_path))}</span>
-          ${w.project_path ? `<button class="btn-ghost" onclick="actionCopy('${esc(w.project_path)}', this)">copy</button>` : ""}
+          ${w.project_path ? `<button class="btn-ghost" onclick="actionCopy(event, '${esc(w.project_path)}', this)">copy</button>` : ""}
         </dd>
       </dl>
     </div>
@@ -344,10 +344,10 @@ function renderDetail() {
 
   html += `
     <div class="card-actions" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
-      <button class="btn btn-secondary" onclick="actionInspect('${esc(w.session_id)}')">Refresh</button>
-      <button class="btn btn-secondary" onclick="actionMessage('${esc(w.session_id)}')">Message</button>
-      ${state !== "closed" && state !== "done" ? `<button class="btn btn-danger" onclick="actionClose('${esc(w.session_id)}')">Close Worker</button>` : ""}
-      ${state === "done" ? `<button class="btn btn-danger" onclick="actionClose('${esc(w.session_id)}')">Dismiss</button>` : ""}
+      <button class="btn btn-secondary" onclick="actionInspect(event, '${esc(w.session_id)}')">Refresh</button>
+      <button class="btn btn-secondary" onclick="actionMessage(event, '${esc(w.session_id)}')">Message</button>
+      ${state !== "closed" && state !== "done" ? `<button class="btn btn-danger" onclick="actionClose(event, '${esc(w.session_id)}')">Close Worker</button>` : ""}
+      ${state === "done" ? `<button class="btn btn-danger" onclick="actionClose(event, '${esc(w.session_id)}')">Dismiss</button>` : ""}
     </div>
   `;
 
