@@ -43,6 +43,13 @@ function usageLevel(n) {
   return "ok";
 }
 
+function isResetPending(session) {
+  if (!session) return false;
+  const pct = Number(session.utilization);
+  const resetText = String(session.resets_in || "").trim().toLowerCase();
+  return pct >= 95 && (resetText === "0m" || resetText === "0h 0m" || resetText === "0m 0s");
+}
+
 function esc(s) {
   if (!s) return "";
   const d = document.createElement("div");
@@ -419,11 +426,19 @@ function renderAll() {
   if (badge) {
     const s = claudeUsage?.session?.utilization;
     const w = claudeUsage?.weekly?.utilization;
-    const badgeLevel = [usageLevel(s), usageLevel(w)].includes("crit") ? "crit" : ([usageLevel(s), usageLevel(w)].includes("warn") ? "warn" : ([usageLevel(s), usageLevel(w)].includes("ok") ? "ok" : "loading"));
+    const pendingReset = isResetPending(claudeUsage?.session);
+    const badgeLevel = pendingReset ? "warn" : ([usageLevel(s), usageLevel(w)].includes("crit") ? "crit" : ([usageLevel(s), usageLevel(w)].includes("warn") ? "warn" : ([usageLevel(s), usageLevel(w)].includes("ok") ? "ok" : "loading")));
     badge.className = `usage-badge ${badgeLevel}`;
     document.getElementById("usage-session").textContent = s != null ? `${s}% session` : "--";
     document.getElementById("usage-reset").textContent = claudeUsage?.session?.resets_in ? `resets in ${claudeUsage.session.resets_in}` : "--";
     document.getElementById("usage-weekly").textContent = w != null ? `${w}% week` : "--";
+    const noteEl = document.getElementById("usage-note");
+    if (pendingReset) {
+      noteEl.classList.remove("hidden");
+      noteEl.textContent = "reset pending";
+    } else {
+      noteEl.classList.add("hidden");
+    }
     badge.title = claudeUsage?.session ? `Claude session ${s}% · resets in ${claudeUsage.session.resets_in} | weekly ${w}% · resets in ${claudeUsage.weekly.resets_in}` : "Claude Code usage";
   }
 
