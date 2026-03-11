@@ -110,15 +110,16 @@ async function handleAPI(req, res) {
       if (url.pathname === "/api/action/close") {
         const body = await readBody(req);
         if (!body.session_id) return json(400, { error: "missing session_id" });
-        const data = await mcporterCall("close_worker", { session_id: body.session_id });
+        const data = await mcporterCall("close_workers", { session_ids: JSON.stringify([body.session_id]), force: "true" });
         return json(200, data);
       }
       if (url.pathname === "/api/action/message") {
         const body = await readBody(req);
         if (!body.session_id || !body.message) return json(400, { error: "missing session_id or message" });
-        const data = await mcporterCall("send_message", {
-          session_id: body.session_id,
+        const data = await mcporterCall("message_workers", {
+          session_ids: JSON.stringify([body.session_id]),
           message: body.message,
+          wait_mode: "none",
         });
         return json(200, data);
       }
