@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PORT="${WORKER_COCKPIT_PORT:-7700}"
-APP_DIR="/Users/felixbarth/.openclaw/workspace/apps/worker-cockpit"
-LOG_DIR="/Users/felixbarth/.openclaw/workspace/tmp"
+APP_DIR="${WORKER_COCKPIT_APP_DIR:-$DIR}"
+STATE_DIR="${WORKER_COCKPIT_STATE_DIR:-$APP_DIR/.local/state}"
+LOG_DIR="$STATE_DIR"
 PID_FILE="$LOG_DIR/worker-cockpit.pid"
 LOG_FILE="$LOG_DIR/worker-cockpit.log"
 

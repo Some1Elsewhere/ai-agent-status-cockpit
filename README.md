@@ -17,6 +17,8 @@ Then open:
 
 This app exists to solve one annoying problem: spawned workers are often **doing real work invisibly**. Worker Cockpit gives you a local visual layer that shows what is running, what is idle, what is awaiting review, what looks stale, and what just happened.
 
+The repo is intentionally portable: avoid machine-specific absolute paths, keep configuration in env vars, and treat the worker MCP profile as configurable.
+
 ## Screenshot
 
 ![Aeon Worker Cockpit live view](docs/worker-cockpit-live.png)
@@ -218,7 +220,7 @@ Worker Cockpit is intentionally dumb/simple. It expects:
 2. `mcporter` can reach a worker MCP server
 3. that worker MCP server exposes compatible tools
 
-The current server implementation is built around the following MCP calls:
+The current server implementation is built around the following MCP calls on the configured `MCP_SERVER` profile:
 
 - `claude-team-http.list_workers`
 - `claude-team-http.examine_worker`
@@ -234,18 +236,12 @@ The app is intentionally small so this kind of adaptation is easy.
 
 ## Current assumptions in `server.js`
 
-- the MCP server name is `claude-team-http`
+- the default MCP server name is `claude-team-http` (override with `MCP_SERVER`)
 - `mcporter` is available in PATH
 - worker events are accessible through `worker_events`
 - worker inspection is accessible through `examine_worker`
 
-If your server name differs, replace references like:
-
-```js
-mcporter call claude-team-http.list_workers
-```
-
-with your own MCP profile name.
+If your server name differs, set `MCP_SERVER` instead of editing code.
 
 ---
 
@@ -258,7 +254,9 @@ You can either export environment variables directly or create a local `.env` fi
 | Env var | Default | Description |
 |---------|---------|-------------|
 | `PORT` | `7700` | Local HTTP port for the cockpit |
+| `MCP_SERVER` | `claude-team-http` | mcporter MCP profile name used for worker calls |
 | `OBSIDIAN_VAULT` | `~/obsidian-vault` | Base path used for Obsidian note lookup |
+| `WORKER_COCKPIT_STATE_DIR` | `./.local/state` (ensure script) | Where the watcher script keeps pid/log state |
 
 ## Example
 

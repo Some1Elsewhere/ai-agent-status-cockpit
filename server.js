@@ -6,11 +6,12 @@ const os = require("node:os");
 
 const PORT = process.env.PORT || 7700;
 const OBSIDIAN_VAULT = process.env.OBSIDIAN_VAULT || path.join(os.homedir(), "obsidian-vault");
+const MCP_SERVER = process.env.MCP_SERVER || "claude-team-http";
 
-// Shell out to mcporter to call claude-team-http tools
+// Shell out to mcporter to call the configured MCP worker server
 function mcporterCall(tool, args = {}) {
   return new Promise((resolve, reject) => {
-    const cmdArgs = ["call", `claude-team-http.${tool}`];
+    const cmdArgs = ["call", `${MCP_SERVER}.${tool}`];
     for (const [k, v] of Object.entries(args)) {
       cmdArgs.push(`${k}=${v}`);
     }
