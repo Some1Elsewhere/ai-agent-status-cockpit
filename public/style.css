@@ -432,6 +432,13 @@ h2 {
   width: 400px;
   max-width: 90vw;
 }
+.modal-confirm {
+  width: 360px;
+}
+.modal-body p {
+  color: var(--text-dim);
+  font-size: 14px;
+}
 .modal-header {
   display: flex;
   justify-content: space-between;

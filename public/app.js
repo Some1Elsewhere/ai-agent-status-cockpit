@@ -5,6 +5,8 @@ let selectedSid = null;
 let examineCache = {};
 let obsidianCache = {};
 let claudeUsage = null;
+let closeTargetSid = null;
+let closeTargetName = null;
 
 // ── Helpers ──
 
@@ -170,15 +172,19 @@ window.actionInspect = function (ev, sid) {
     .catch((err) => console.error("Inspect error:", err));
 };
 
-window.actionClose = async function (ev, sid) {
+window.actionClose = function (ev, sid) {
   if (ev) ev.stopPropagation();
-  if (!confirm("Close this worker?")) return;
-  try {
-    await apiPost("/api/action/close", { session_id: sid });
-    poll();
-  } catch (err) {
-    console.error("Close error:", err);
-  }
+  const worker = lastWorkers.find((w) => w.session_id === sid);
+  closeTargetSid = sid;
+  closeTargetName = worker?.name || sid;
+  document.getElementById("close-modal-text").textContent = `Are you sure you want to close ${closeTargetName}?`;
+  document.getElementById("close-modal").classList.remove("hidden");
+};
+
+window.closeCloseModal = function () {
+  document.getElementById("close-modal").classList.add("hidden");
+  closeTargetSid = null;
+  closeTargetName = null;
 };
 
 let msgTargetSid = null;
@@ -203,6 +209,18 @@ document.getElementById("msg-send-btn").addEventListener("click", async () => {
     closeModal();
   } catch (err) {
     console.error("Message error:", err);
+  }
+});
+
+document.getElementById("close-confirm-btn").addEventListener("click", async () => {
+  if (!closeTargetSid) return;
+  try {
+    await apiPost("/api/action/close", { session_id: closeTargetSid });
+    closeCloseModal();
+    if (selectedSid === closeTargetSid) selectedSid = null;
+    poll();
+  } catch (err) {
+    console.error("Close error:", err);
   }
 });
 
@@ -513,6 +531,8 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     if (!document.getElementById("msg-modal").classList.contains("hidden")) {
       closeModal();
+    } else if (!document.getElementById("close-modal").classList.contains("hidden")) {
+      closeCloseModal();
     } else if (selectedSid) {
       selectedSid = null;
       renderAll();

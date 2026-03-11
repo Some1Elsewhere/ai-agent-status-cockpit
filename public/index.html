@@ -90,6 +90,23 @@
     </div>
   </div>
 
+  <!-- Close confirm modal -->
+  <div id="close-modal" class="modal-overlay hidden">
+    <div class="modal modal-confirm">
+      <div class="modal-header">
+        <h3>Close Worker</h3>
+        <button class="btn-icon btn-sm" onclick="closeCloseModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="close-modal-text">Are you sure you want to close this worker?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeCloseModal()">Cancel</button>
+        <button class="btn btn-danger" id="close-confirm-btn">Close Worker</button>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
