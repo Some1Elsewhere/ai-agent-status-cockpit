@@ -5,7 +5,7 @@ Visual mission-control dashboard for `claude-team` / `maniple` workers in an Ope
 ## Quickstart
 
 ```bash
-git clone git@github.com:Some1Elsewhere/aeon-worker-cockpit.git
+git clone <your-repo-url> aeon-worker-cockpit
 cd aeon-worker-cockpit
 cp .env.example .env   # optional
 ./run.sh
@@ -110,12 +110,11 @@ You need:
 - `mcporter` installed
 - a running worker backend exposed through `mcporter`
 
-For the exact setup this cockpit was built against, the worker backend is:
+A typical compatible setup uses:
 
-- `claude-team` skill
-- backed by `maniple-mcp`
-- exposed as `claude-team-http`
-- reachable at `http://127.0.0.1:8766/mcp`
+- a `claude-team` / `maniple` worker service
+- exposed through an MCP profile (for example `claude-team-http`)
+- reachable on a local MCP HTTP endpoint
 
 ## A. Install / verify Claude Code
 
@@ -155,7 +154,7 @@ This is the service model used in the current setup:
 uvx --from maniple-mcp@latest maniple --http
 ```
 
-That exposes an MCP HTTP endpoint, typically:
+That exposes an MCP HTTP endpoint, typically something like:
 
 - `http://127.0.0.1:8766/mcp`
 
@@ -251,8 +250,6 @@ with your own MCP profile name.
 ---
 
 # Configuration
-
-## Configuration
 
 You can either export environment variables directly or create a local `.env` file from `.env.example` and start the app with `./run.sh`.
 
