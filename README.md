@@ -4,6 +4,10 @@ Visual mission-control dashboard for `claude-team` / `maniple` workers in an Ope
 
 This app exists to solve one annoying problem: spawned workers are often **doing real work invisibly**. Worker Cockpit gives you a local visual layer that shows what is running, what is idle, what is awaiting review, what looks stale, and what just happened.
 
+## Screenshot
+
+![Aeon Worker Cockpit live view](docs/worker-cockpit-live.png)
+
 ## What it does
 
 - lists current `claude-team` / `maniple` workers
