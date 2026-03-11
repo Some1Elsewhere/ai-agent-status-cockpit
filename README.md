@@ -27,7 +27,7 @@ Before this app can do anything useful, you need:
 - **OpenClaw** installed and working
 - **Claude Code** installed and logged in
 - **mcporter** installed
-- optional: the `claude-code-usage` script/skill if you want the Claude usage badge in the header
+- Claude Code credentials available in the macOS Keychain (set automatically by `claude /login`)
 - a compatible worker backend that is **enabled and running**
   - typically `claude-team` / `maniple`
 - an MCP profile in `mcporter` that points to that backend
@@ -63,7 +63,7 @@ Important: this app is a **viewer/control surface**, not the worker backend itse
   - send a message to a worker
   - dismiss / close workers
 - optionally checks whether a likely Obsidian session note exists
-- shows a compact Claude Code usage badge in the header when the `claude-code-usage` script is available
+- shows a compact Claude Code usage badge in the header (built-in; no external script needed)
 
 ## Stack
 
@@ -283,6 +283,19 @@ You can either export environment variables directly or create a local `.env` fi
 | `OBSIDIAN_VAULT` | `~/obsidian-vault` | Base path used for Obsidian note lookup |
 | `WORKER_COCKPIT_STATE_DIR` | `./.local/state` (ensure script) | Where the watcher script keeps pid/log state |
 
+## Integrated Claude usage provider
+
+The Claude usage badge in the header is powered by a built-in provider (`plugins/claude-usage.js`). It reads your Claude Code OAuth credentials directly from the macOS Keychain and calls the Anthropic usage API from Node.js — no external shell scripts required.
+
+Behavior:
+- Credentials are read from the macOS Keychain entry `Claude Code-credentials` (populated automatically by `claude /login`)
+- Usage data is fetched from `https://api.anthropic.com/api/oauth/usage`
+- Results are cached in memory for 60 seconds to avoid excessive API calls
+- If the API is temporarily unreachable, stale cached data is served with `status: "stale"`
+- If no credentials are found or the token has expired, the badge shows `--` and `/api/claude-usage` returns an error
+
+The response includes a `status` field (`ok`, `stale`) alongside the usual `session` and `weekly` objects.
+
 ## Example
 
 ```bash
@@ -320,6 +333,9 @@ Returns recent worker events.
 
 ## GET `/api/obsidian?name=<workerName>`
 Returns whether a matching Obsidian note was found.
+
+## GET `/api/claude-usage`
+Returns Claude Code usage from the integrated provider. Includes `session` and `weekly` objects with `utilization` (percentage), `resets_in` (human-readable), and `resets_at` (ISO timestamp). Also includes a `status` field: `ok` for a fresh or cached read, `stale` if cached data is being served because a refresh failed. Returns `{ error: "..." }` with HTTP 500 if no credentials are available.
 
 ## POST `/api/action/message`
 Body:
