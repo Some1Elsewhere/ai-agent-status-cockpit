@@ -77,14 +77,24 @@ function httpGet(url, headers) {
   });
 }
 
+function normalizeUtilization(value) {
+  if (typeof value !== "number" || Number.isNaN(value)) return 0;
+  // Anthropic currently returns percentages directly (e.g. 21.0).
+  // Keep backward compatibility only for fractional values like 0.21.
+  return value < 1 ? Math.round(value * 100) : Math.round(value);
+}
+
 function formatPeriod(raw) {
   if (!raw) return null;
-  const utilization = typeof raw.utilization === "number" ? Math.round(raw.utilization * 100) : 0;
+  const utilization = normalizeUtilization(raw.utilization);
   const resetsAt = raw.resets_at || null;
   let resetsIn = "unknown";
   if (resetsAt) {
-    const secsLeft = Math.floor((new Date(resetsAt).getTime() - Date.now()) / 1000);
-    resetsIn = secsToHuman(secsLeft);
+    const resetMs = new Date(resetsAt).getTime();
+    if (Number.isFinite(resetMs)) {
+      const secsLeft = Math.floor((resetMs - Date.now()) / 1000);
+      resetsIn = secsToHuman(secsLeft);
+    }
   }
   return { utilization, resets_in: resetsIn, resets_at: resetsAt };
 }
